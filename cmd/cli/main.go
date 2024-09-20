@@ -11,7 +11,7 @@ var threads int
 
 func init() {
 	flag.StringVar(&filepath, "path", "", "path ips file")
-	flag.IntVar(&threads, "thread", 12, "total file reading threads. Tune it while your cpu will not fully loaded.")
+	flag.IntVar(&threads, "threads", 12, "total file reading threads. Tune it while your cpu will not fully loaded.")
 }
 
 func main() {
