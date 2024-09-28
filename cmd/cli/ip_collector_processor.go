@@ -5,18 +5,18 @@ import (
 	"sync"
 )
 
-type IPCollector struct {
+type IP3Collector struct {
 	ipChan chan IP3
-	ips    [256 * 256 * 8]uint64
+	ips    [256 * 256 * 4]uint64
 }
 
-func NewIPCollector(wg *sync.WaitGroup) *IPCollector {
-	iPCollector := &IPCollector{
+func NewIP3Collector(wg *sync.WaitGroup) *IP3Collector {
+	iPCollector := &IP3Collector{
 		ipChan: make(chan IP3),
 	}
 
 	wg.Add(1)
-	go func(collector *IPCollector) {
+	go func(collector *IP3Collector) {
 		defer wg.Done()
 
 		for ip := range collector.ipChan {
@@ -34,15 +34,15 @@ func NewIPCollector(wg *sync.WaitGroup) *IPCollector {
 	return iPCollector
 }
 
-func (iPCollector *IPCollector) Close() {
+func (iPCollector *IP3Collector) Close() {
 	close(iPCollector.ipChan)
 }
 
-func (iPCollector *IPCollector) SendIP(ip IP3) {
+func (iPCollector *IP3Collector) SendIP(ip IP3) {
 	iPCollector.ipChan <- ip
 }
 
-func (iPCollector *IPCollector) Len() int {
+func (iPCollector *IP3Collector) Len() int {
 	cnt := 0
 	for _, v := range iPCollector.ips {
 		cnt += bits.OnesCount64(v)
@@ -51,16 +51,16 @@ func (iPCollector *IPCollector) Len() int {
 }
 
 type IPCollectorProcessor struct {
-	ipCollectors [256]*IPCollector
+	ipCollectors [256]*IP3Collector
 	wg           *sync.WaitGroup
 }
 
 func NewIpCollectorProcessor() *IPCollectorProcessor {
-	collectors := [256]*IPCollector{}
+	collectors := [256]*IP3Collector{}
 	wg := &sync.WaitGroup{}
 
 	for i := range 256 {
-		collectors[i] = NewIPCollector(wg)
+		collectors[i] = NewIP3Collector(wg)
 	}
 
 	return &IPCollectorProcessor{

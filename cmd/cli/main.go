@@ -35,6 +35,7 @@ func main() {
 	parser := NewsParser(threads, filepath)
 
 	proc := NewIpCollectorProcessor()
+	//proc := NewProcessor(16)
 
 	logger := NewLogger()
 	log.Println("START")
